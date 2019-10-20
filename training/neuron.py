@@ -8,25 +8,23 @@
 import numpy as np
 import random
 from matplotlib import pyplot as plt
-from parameters import param as par
+from parameters import *
 
 class neuron:
-	def __init__(self):
-		self.t_ref = 30
-		self.t_rest = -1
-		self.P = par.Prest
-	def check(self):
-		if self.P>= self.Pth:
-			self.P = par.Prest
-			return 1	
-		elif self.P < par.Pmin:
-			self.P  = par.Prest
-			return 0
-		else:
-			return 0
+	# issue: What if multiple neurons went above threshold but only one will have the highest value?
+	# def check(self):
+	# 	if self.P>= self.Pth:
+	# 		self.P = Prest
+	# 		return 1	
+	# 	elif self.P < Pinhibit:
+	# 		self.P  = Prest
+	# 		return 0
+	# 	else:
+	# 		return 0
 	def inhibit(self):
-		self.P  = par.Pmin
-	def initial(self, th):
-		self.Pth = th
+		self.P  = Pinhibit
+	def initial(self):
+		self.Pth = Pth
 		self.t_rest = -1
-		self.P = par.Prest
+		self.t_ref=350 #(us)
+		self.P = Prest

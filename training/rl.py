@@ -8,26 +8,26 @@
 
 import numpy as np
 from matplotlib import pyplot as plt
-from parameters import param as par
+from parameters import *
 
 #STDP reinforcement learning curve
 def rl(t):
 	
 	if t>0:
-		return -par.A_plus*np.exp(-float(t)/par.tau_plus)
+		return -A_plus*np.exp(-float(t)/tau_plus)
 	if t<=0:
-		return par.A_minus*np.exp(float(t)/par.tau_minus)
+		return A_minus*np.exp(float(t)/tau_minus)
 
 
 #STDP weight update rule
 def update(w, del_w):
 	if del_w<0:
-		return w + par.sigma*del_w*(w-abs(par.w_min))*par.scale
+		return w + sigma*del_w*(w-abs(w_min))**mu
 	elif del_w>0:
-		return w + par.sigma*del_w*(par.w_max-w)*par.scale
+		return w + sigma*del_w*(w_max-w)**mu
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
 	
-	print rl(-20)*par.sigma
+# 	print rl(-20)*sigma
 
 	
