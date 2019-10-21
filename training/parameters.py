@@ -18,12 +18,12 @@ Pinhibit = -200 #(mV)
 Pth = -55 #(mV)
 Phyperpolarization = -90
 var_D = 0.1
-
+synaptic_change_threshold = np.sqrt(m)
 synapse_init=np.zeros((n,m))
 for i in range(n):
 	for j in range(m):
-		synapse_init[i][j] = random.uniform(0,0.3)
-w_min=np.min(synapse_init)
+		synapse_init[i][j] = random.uniform(0.2,0.4)
+w_min=0
 w_max=np.max(synapse_init)
 # w_max = 1
 # w_min = 0
@@ -33,7 +33,7 @@ A_minus = 0.8 # 0.01 # time difference is negative i.e positive reinforcement
 tau_plus = 100
 tau_minus = 100
 
-epoch = 1
+epoch = 3
 
 mu=0.9
 fr_bits = 12

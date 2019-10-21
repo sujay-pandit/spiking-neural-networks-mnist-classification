@@ -26,5 +26,5 @@ class neuron:
 	def initial(self):
 		self.Pth = Pth
 		self.t_rest = -1
-		self.t_ref=350 #(us)
+		self.t_ref=5 #(us)
 		self.P = Prest

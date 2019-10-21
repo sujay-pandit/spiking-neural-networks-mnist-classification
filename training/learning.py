@@ -1,10 +1,7 @@
 
 
 ####################################################### README ####################################################################
-
 # This is the main file which calls all the functions and trains the network by updating weights
-
-
 #####################################################################################################################################
 
 
@@ -24,10 +21,11 @@ import os
 import pandas as pd
 import time
 #potentials of output neurons
+
+### TO CREATE "EXPERIENCE" FOR NEURONS
 pot_arrays = []
 for i in range(n):
 	pot_arrays.append([])
-
 #time series 
 time_of_learning  = np.arange(1, T+1, 1)
 
@@ -42,11 +40,17 @@ for i in range(n):
 #synapse matrix	initialization
 synapse = synapse_init
 
+synapse_memory=np.zeros((n,m))
+
 for k in range(epoch):
 	print(k)
 	for i in os.listdir("./train_mnist/"):
+
 		img = imageio.imread("./train_mnist/"+i)
 
+		## Some synaptic flags
+		tmp_synapse =  synapse_init
+		tmp_synapse_memory=np.zeros((n,m))
 		#Convolving image with receptive field
 		pot = rf(img)
 		# imageio.imwrite(str(i)+".png",pot)
@@ -62,9 +66,8 @@ for k in range(epoch):
 		# 	x.initial()
 
 		#flag for lateral inhibition
-		f_spike = 0
 		winner = False
-		count_wins= np.zeros(3)
+		count_wins= np.zeros(n)
 		active_pot = np.zeros(n)
 
 		#Leaky integrate and fire neuron dynamics
@@ -79,10 +82,12 @@ for k in range(epoch):
 				pot_arrays[j].append(x.P) ## Only for plotting: Changing potential overtime
 			winner = np.argmax(active_pot)
 			winner_synapses=[]
+
 			#Check for spikes and update weights				
 			for j,x in enumerate(layer2):
 				#s = x.check() # Check for SPike; if inhibited reset to resting Voltage
 				if(j==winner and active_pot[j]>layer2[j].Pth):
+					#if(np.sum(synapse_memory)==0): ## WINNER NEURON HAS NO PRIOR EXPERIENCE
 					x.t_rest = t + x.t_ref
 					x.P = Phyperpolarization
 					x.Pth-= -1 ## Homoeostasis: Increasing the threshold of the neuron
@@ -92,45 +97,58 @@ for k in range(epoch):
 							if 0<=t+t1<T+1:
 								if train[h][t+t1] == 1:
 									synapse[j][h] = update(synapse[j][h], rl(t1))
-									winner_synapses.append(h)
-						if h not in winner_synapses:
+									synapse_memory[j][h]=1
+									continue
+						if synapse_memory[j][h]!=1:
 									synapse[j][h] = update(synapse[j][h], rl(2))
-					# for p in range(n):
-					# 	if(p!=winner):
-					# 		for h in winner_synapses:
-					# 			synapse[p][h] = update(synapse[p][h], rl(2))
-
-							
-					
-				elif(winner==False):
 					for p in range(n):
-						for h in range(m):
-							synapse[p][h] = update(synapse[p][h], rl(-5))
-							
+						if p!=winner:
+							layer2[p].inhibit()
+						#print("Weights updated : ",np.sum(synapse_memory))
+					# else:
+					# 	for h in range(m):
+					# 		for t1 in range(0,t_back-1, -1): # if presynaptic spike came before postsynaptic spike
+					# 			if 0<=t+t1<T+1:
+					# 				if train[h][t+t1] == 1:
+					# 					if(synapse[j][h-1]==1 or synapse[j][h]==1 or  synapse[j][h+1]==1):
+					# 						tmp_synapse[j][h] = update(synapse[j][h], rl(t1))
+					# 						tmp_synapse_memory[j][h]=1
+					# 		if tmp_synapse_memory[j][h]!=1:
+					# 					tmp_synapse[j][h] = update(synapse[j][h], rl(2))
+					# 	#print("Expected Change = ",abs(np.sum(tmp_synapse)-np.sum(synapse)))
+					# 	if(abs(np.sum(tmp_synapse)-np.sum(synapse))<= synaptic_change_threshold):
+					# 		x.t_rest = t + x.t_ref
+					# 		x.P = Phyperpolarization
+					# 		x.Pth-= -1 ## Homoeostasis: Increasing the threshold of the neuron
+					# 		count_wins[j]+=1
+					# 		synapse=tmp_synapse
+					# 		for p in range(n):
+					# 			if p!=winner:
+					# 				layer2[p].inhibit()
+					# 	else: ## NO UPDATION IN WEIGHTS, NEURON SELF-INHIBITS
+					# 		print(str(j)+ " Self inhibits")
+					# 		x.inhibit()
 
-
+				elif(winner==False):
+					# for p in range(n):
+					# 	for h in range(m):
+					# 		synapse[p][h] = update(synapse[p][h], rl(-5))
 					continue
-				# else:
-				# 	# for h in winner_synapses: ## lower the weights for loser neurons
-				# 	layer2[j].Pth-=1
-				# 		#synapse[j][h] = update(synapse[j][h], rl(1))
-									
-					
-					
-		if(winner!=False):
-			for p in range(m):
-				if sum(train[p])==0:
-					# synapse[winner][p] -= 0.06
-					# if(synapse[winner][p]<w_min):
-					synapse[winner][p] = w_min
+
+
+
 			winner=False
-		for p in range(n):
-			reconst_weights(synapse[p],str(i)+"_"+str(p))
+		
+		
 		for p in range(n):
 				layer2[p].initial()
 		
 		print(i+" WInner COunt = ",count_wins)
-		time.sleep(3)
+		print("LEARNING NEURON ",np.argmax(count_wins))
+		
+	for p in range(n):
+			reconst_weights(synapse[p],str(p)+"_"+str(k)+"_"+str(i))
+			time.sleep(1)
 #synapse=np.where(synapse >= np.max(synapse)-2*np.std(synapse), 1, 0)
 np.savetxt("weights.csv", synapse, delimiter=",")
 ttt = np.arange(0,len(pot_arrays[0]),1)
@@ -146,6 +164,6 @@ for i in range(len(ttt)):
 # 	plt.plot(ttt,pot_arrays[i])
 # 	plt.show()
 
-#Reconstructing weights to analyse training
-for i in range(n):
-	reconst_weights(synapse[i],i)
+# #Reconstructing weights to analyse training
+# for i in range(n):
+# 	reconst_weights(synapse[i],i)

@@ -21,7 +21,7 @@ def reconst_weights(weights, num):
 		for j in range(pixel_x):
 			img[i][j] = int(interp(weights[i][j], [w_min,w_max], [0,255]))	
 
-	imageio.imwrite('neuron' + str(num) + '.png' ,img)
+	imageio.imwrite('neuron_' + str(num) ,img.astype(np.uint8))
 	return img
 
 def reconst_rf(weights, num):

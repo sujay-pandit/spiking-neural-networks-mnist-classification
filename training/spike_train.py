@@ -28,7 +28,7 @@ def encode(pot):
 			temp = np.zeros([(T+1),])
 
 			#calculating firing rate proportional to the membrane potential
-			freq = interp(pot[l][m], [np.min(pot),np.max(pot)], [1,87])
+			freq = interp(pot[l][m], [np.min(pot),np.max(pot)], [1,50])
 			
 			# print freq
 			# if freq<=0:
