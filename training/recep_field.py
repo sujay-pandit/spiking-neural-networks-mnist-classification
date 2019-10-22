@@ -38,15 +38,3 @@ def rf(inp):
 						summ = summ + w[ox+m][oy+n]*inp[i+m][j+n]/255
 			pot[i][j] = summ
 	return pot		
-
-# if __name__ == '__main__':
-
-# 	img = imageio.imread("mnist1/" + str(1) + ".png", 0)
-# 	pot = rf(img)
-# 	max_a = []
-# 	min_a = []
-# 	for i in pot:
-# 		max_a.append(max(i))
-# 		min_a.append(min(i))
-# 	print "max", max(max_a)
-# 	print "min", min(min_a)

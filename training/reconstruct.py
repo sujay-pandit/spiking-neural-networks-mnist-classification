@@ -9,7 +9,6 @@
 import numpy as np
 from numpy import interp
 import imageio
-from recep_field import rf
 from parameters import *
 
 

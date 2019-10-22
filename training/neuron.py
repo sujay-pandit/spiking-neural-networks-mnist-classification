@@ -5,22 +5,11 @@
 
 ###################################################################################################################################
 
-import numpy as np
-import random
-from matplotlib import pyplot as plt
 from parameters import *
 
 class neuron:
-	# issue: What if multiple neurons went above threshold but only one will have the highest value?
-	# def check(self):
-	# 	if self.P>= self.Pth:
-	# 		self.P = Prest
-	# 		return 1	
-	# 	elif self.P < Pinhibit:
-	# 		self.P  = Prest
-	# 		return 0
-	# 	else:
-	# 		return 0
+	def hyperpolarization(self):
+		self.P = Phyperpolarization
 	def inhibit(self):
 		self.P  = Pinhibit
 	def initial(self):

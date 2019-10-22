@@ -12,11 +12,9 @@ from matplotlib import pyplot as plt
 from recep_field import rf
 import imageio
 from spike_train import encode
-from rl import rl
-from rl import update
+from rl import *
 from reconstruct import reconst_weights
 from parameters import *
-from var_th import threshold
 import os
 import pandas as pd
 import time
@@ -73,7 +71,7 @@ for k in range(epoch):
 			for j,x in enumerate(output_layer):
 				if(j==winner and active_pot[j]>output_layer[j].Pth):
 					x.t_rest = t + x.t_ref
-					x.P = Phyperpolarization
+					x.hyperpolarization()
 					x.Pth-= -1 ## Homoeostasis: Increasing the threshold of the neuron
 					count_spikes[j]+=1
 					for h in range(m):
@@ -91,7 +89,7 @@ for k in range(epoch):
 								count_spikes[p]+=1
 							output_layer[p].inhibit()
 					break
-				
+
 		# bring neuron potentials to rest
 		for p in range(n):
 				output_layer[p].initial()

@@ -26,8 +26,5 @@ def update(w, del_w):
 	elif del_w>0:
 		return w + sigma*del_w*(w_max-w)**mu
 
-# if __name__ == '__main__':
-	
-# 	print rl(-20)*sigma
 
 	
