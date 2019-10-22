@@ -20,26 +20,25 @@ from var_th import threshold
 import os
 import pandas as pd
 import time
-#potentials of output neurons
 
-### TO CREATE "EXPERIENCE" FOR NEURONS
 pot_arrays = []
+pth_arrays = []
 for i in range(n):
 	pot_arrays.append([])
+	pth_arrays.append([])
 #time series 
 time_of_learning  = np.arange(1, T+1, 1)
 
-layer2 = []
+output_layer = []
 
 # creating the hidden layer of neurons
 for i in range(n):
 	a = neuron()
 	a.initial()
-	layer2.append(a)
+	output_layer.append(a)
 
-#synapse matrix	initialization
+#Random synapse matrix	initialization
 synapse = synapse_init
-
 synapse_memory=np.zeros((n,m))
 
 for k in range(epoch):
@@ -48,122 +47,72 @@ for k in range(epoch):
 
 		img = imageio.imread("./train_mnist/"+i)
 
-		## Some synaptic flags
-		tmp_synapse =  synapse_init
-		tmp_synapse_memory=np.zeros((n,m))
-		#Convolving image with receptive field
-		pot = rf(img)
-		# imageio.imwrite(str(i)+".png",pot)
-		#Generating spike train
-		train = np.array(encode(pot))
+		#Convolving image with receptive field and encoding to generate spike train
+		train = np.array(encode(rf(img)))
 
-		#calculating threshold value for the image
-		#var_threshold = threshold(train)
-		
-	
-
-		# for x in layer2:
-		# 	x.initial()
-
-		#flag for lateral inhibition
+		#Local variables
 		winner = False
-		count_wins= np.zeros(n)
+		count_spikes= np.zeros(n)
 		active_pot = np.zeros(n)
 
 		#Leaky integrate and fire neuron dynamics
 		for t in time_of_learning:
-			for j, x in enumerate(layer2):
+			for j, x in enumerate(output_layer):
 				if(x.t_rest<t):
 					x.P = x.P + np.dot(synapse[j], train[:,t])
 					if(x.P>Prest):
 						x.P -= var_D
 					active_pot[j] = x.P
 				
-				pot_arrays[j].append(x.P) ## Only for plotting: Changing potential overtime
+				pot_arrays[j].append(x.P) # Only for plotting: Changing potential overtime
+				pth_arrays[j].append(x.Pth) # Only for plotting: Changing threshold overtime
 			winner = np.argmax(active_pot)
 			winner_synapses=[]
 
 			#Check for spikes and update weights				
-			for j,x in enumerate(layer2):
-				#s = x.check() # Check for SPike; if inhibited reset to resting Voltage
-				if(j==winner and active_pot[j]>layer2[j].Pth):
-					#if(np.sum(synapse_memory)==0): ## WINNER NEURON HAS NO PRIOR EXPERIENCE
+			for j,x in enumerate(output_layer):
+				if(j==winner and active_pot[j]>output_layer[j].Pth):
 					x.t_rest = t + x.t_ref
 					x.P = Phyperpolarization
 					x.Pth-= -1 ## Homoeostasis: Increasing the threshold of the neuron
-					count_wins[j]+=1
+					count_spikes[j]+=1
 					for h in range(m):
 						for t1 in range(0,t_back-1, -1): # if presynaptic spike came before postsynaptic spike
-							if 0<=t+t1<T+1:
-								if train[h][t+t1] == 1:
-									synapse[j][h] = update(synapse[j][h], rl(t1))
+							if 0<=t+t1<T+1: 
+								if train[h][t+t1] == 1: # if presynaptic spike was in the tolerance window
+									synapse[j][h] = update(synapse[j][h], rl(t1)) # strengthen weights
 									synapse_memory[j][h]=1
-									continue
-						if synapse_memory[j][h]!=1:
-									synapse[j][h] = update(synapse[j][h], rl(2))
+									break
+						if synapse_memory[j][h]!=1: # if presynaptic spike was not in the tolerance window, reduce weights of that synapse
+									synapse[j][h] = update(synapse[j][h], rl(3))
 					for p in range(n):
 						if p!=winner:
-							layer2[p].inhibit()
-						#print("Weights updated : ",np.sum(synapse_memory))
-					# else:
-					# 	for h in range(m):
-					# 		for t1 in range(0,t_back-1, -1): # if presynaptic spike came before postsynaptic spike
-					# 			if 0<=t+t1<T+1:
-					# 				if train[h][t+t1] == 1:
-					# 					if(synapse[j][h-1]==1 or synapse[j][h]==1 or  synapse[j][h+1]==1):
-					# 						tmp_synapse[j][h] = update(synapse[j][h], rl(t1))
-					# 						tmp_synapse_memory[j][h]=1
-					# 		if tmp_synapse_memory[j][h]!=1:
-					# 					tmp_synapse[j][h] = update(synapse[j][h], rl(2))
-					# 	#print("Expected Change = ",abs(np.sum(tmp_synapse)-np.sum(synapse)))
-					# 	if(abs(np.sum(tmp_synapse)-np.sum(synapse))<= synaptic_change_threshold):
-					# 		x.t_rest = t + x.t_ref
-					# 		x.P = Phyperpolarization
-					# 		x.Pth-= -1 ## Homoeostasis: Increasing the threshold of the neuron
-					# 		count_wins[j]+=1
-					# 		synapse=tmp_synapse
-					# 		for p in range(n):
-					# 			if p!=winner:
-					# 				layer2[p].inhibit()
-					# 	else: ## NO UPDATION IN WEIGHTS, NEURON SELF-INHIBITS
-					# 		print(str(j)+ " Self inhibits")
-					# 		x.inhibit()
-
-				elif(winner==False):
-					# for p in range(n):
-					# 	for h in range(m):
-					# 		synapse[p][h] = update(synapse[p][h], rl(-5))
-					continue
-
-
-
-			winner=False
-		
-		
+							if(output_layer[p].P>output_layer[p].Pth):
+								count_spikes[p]+=1
+							output_layer[p].inhibit()
+					break
+				
+		# bring neuron potentials to rest
 		for p in range(n):
-				layer2[p].initial()
-		
-		print(i+" WInner COunt = ",count_wins)
-		print("LEARNING NEURON ",np.argmax(count_wins))
-		
-	for p in range(n):
-			reconst_weights(synapse[p],str(p)+"_"+str(k)+"_"+str(i))
-			time.sleep(1)
-#synapse=np.where(synapse >= np.max(synapse)-2*np.std(synapse), 1, 0)
-np.savetxt("weights.csv", synapse, delimiter=",")
-ttt = np.arange(0,len(pot_arrays[0]),1)
-P_th = []
-for i in range(len(ttt)):
-	P_th.append(layer2[0].Pth)
+				output_layer[p].initial()
 
-# #plotting 
+		print("Image: "+i+" Spike COunt = ",count_spikes)
+		print("Learning Neuron: ",np.argmax(count_spikes))
+	
+	# to write intermediate synapses for neurons
+	for p in range(n):
+			reconst_weights(synapse[p],str(p)+"_epoch_"+str(k))
+
+np.savetxt("weights.csv", synapse, delimiter=",")
+
+# Plotting
+# ttt = np.arange(0,len(pot_arrays[0]),1)
 # for i in range(n):
 # 	axes = plt.gca()
-# 	axes.set_ylim([-100,0])
-# 	plt.plot(ttt,P_th, 'r' )
+# 	plt.plot(ttt,pth_arrays[i], 'r' )
 # 	plt.plot(ttt,pot_arrays[i])
 # 	plt.show()
 
-# #Reconstructing weights to analyse training
-# for i in range(n):
-# 	reconst_weights(synapse[i],i)
+#Reconstructing weights to analyse training
+for i in range(n):
+	reconst_weights(synapse[i],str(i)+"_final")
