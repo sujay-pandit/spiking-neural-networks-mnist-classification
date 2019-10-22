@@ -11,8 +11,9 @@ class neuron:
 	def hyperpolarization(self,t):
 		self.P = Phyperpolarization
 		self.t_ref+=t
-	def inhibit(self):
+	def inhibit(self,t):
 		self.P  = Pinhibit
+		self.t_ref=2*self.t_ref+t
 	def initial(self):
 		self.Pth = Pth
 		self.t_rest = -1

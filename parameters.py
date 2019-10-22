@@ -7,7 +7,7 @@ import numpy as np
 import random
 
 # Simulation Parameters
-T = 200 #Training time for every image
+T = 350 #Training time for every image
 t_back = -5
 epoch = 10
 
@@ -18,10 +18,11 @@ m = pixel_x*pixel_x # Number of neurons in first layer
 n =  10  # Number of neurons in second layer
 
 # Neuron Parameters
-Pinhibit = -500 
+Pinhibit = -100 
 Pth = -55
 Phyperpolarization = -90
-var_D = 1
+Pdrop = 0.8
+Pthdrop = 0.4
 synaptic_change_threshold = np.sqrt(m)
 synapse_init=np.zeros((n,m))
 for i in range(n):

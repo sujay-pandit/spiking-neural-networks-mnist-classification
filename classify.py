@@ -18,9 +18,7 @@ from parameters import *
 time_of_learning  = np.arange(1, T+1, 1)
 output_layer = []
 # creating the hidden layer of neurons
-for i in range(n):
-	a = neuron()
-	output_layer.append(a)
+
 
 #synapse matrix
 synapse = np.zeros((n,m))
@@ -31,15 +29,17 @@ labels_matrix=np.array(neuron_labels.values)
 weight_matrix = np.array(learned_weights.values)
 m = weight_matrix.shape[1] #Number of neurons in first layer
 n = weight_matrix.shape[0] #Number of neurons in second layer
-for i in range (n):
+for i in range(n):
+	a = neuron()
+	output_layer.append(a)
 	synapse[i] = weight_matrix[i]
 
 
 predicted_class=[]
 actual_class=[]
 for folder_number in range(10):
-	image_path='./testing/'+str(folder_number)+'/'
-	for i in os.listdir(image_path):
+	image_path='./mnist_png/testing/'+str(folder_number)+'/'
+	for i in os.listdir(image_path)[:5]:
 		count_spikes = np.zeros((n,1))
 
 		#read the image to be classified
@@ -61,13 +61,19 @@ for folder_number in range(10):
 					if(x.t_rest<t):
 						x.P = x.P + np.dot(synapse[j], train[:,t])
 						if(x.P>Prest):
-							x.P -= var_D
-						active_pot[j] = x.P
+							x.P -= Pdrop
+					active_pot[j] = x.P
 				for j in range(n):
-					if(active_pot[j]>output_layer[j].Pth):
-						count_spikes[j]+=1
-						output_layer[j].Pth-=1
-						output_layer[j].hyperpolarization(t)
+					if(j==np.argmax(active_pot)):
+						if(active_pot[j]>output_layer[j].Pth):
+							count_spikes[j]+=1
+							output_layer[j].Pth-=1
+							output_layer[j].hyperpolarization(t)
+							for p in range(n):
+								if p!=j:
+									if(output_layer[p].P>output_layer[p].Pth):
+										output_layer[p].inhibit(t)
+							break
 
 				#Check for spikes				
 				# for j,x in enumerate(output_layer):
@@ -83,10 +89,10 @@ for folder_number in range(10):
 				# 				output_layer[p].inhibit()
 				# 		break
 		
-		# print(count_spikes)
+		print(count_spikes)
 		print(i)
-		# print("Predicted_class = ",labels_matrix[np.argmax(count_spikes)][0])
-		# print("Actua class = ",folder_number)
+		print("Predicted_class = ",labels_matrix[np.argmax(count_spikes)][0])
+		print("Actua class = ",folder_number)
 		predicted_class.append(labels_matrix[np.argmax(count_spikes)][0])
 		actual_class.append(folder_number)
 accuracy=(np.sum(np.array(predicted_class)==np.array(actual_class))/len(predicted_class))*100

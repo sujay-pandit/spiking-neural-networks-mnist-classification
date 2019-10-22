@@ -61,19 +61,20 @@ for k in range(epoch):
 				if(x.t_rest<t):
 					x.P = x.P + np.dot(synapse[j], train[:,t])
 					if(x.P>Prest):
-						x.P -= var_D
+						x.P -= Pdrop
+						if(x.Pth > Pth):
+								x.Pth -= Pthdrop 
 					active_pot[j] = x.P
 				
 				pot_arrays[j].append(x.P) # Only for plotting: Changing potential overtime
 				pth_arrays[j].append(x.Pth) # Only for plotting: Changing threshold overtime
 			winner = np.argmax(active_pot)
-			winner_synapses=[]
 
 			#Check for spikes and update weights				
 			for j,x in enumerate(output_layer):
 				if(j==winner and active_pot[j]>output_layer[j].Pth):
 					x.hyperpolarization(t)
-					x.Pth-= -1 ## Homoeostasis: Increasing the threshold of the neuron
+					x.Pth-= -1 ## Adaptive Membrane/Homoeostasis: Increasing the threshold of the neuron
 					count_spikes[j]+=1
 					for h in range(m):
 						for t1 in range(0,t_back-1, -1): # if presynaptic spike came before postsynaptic spike
@@ -83,12 +84,12 @@ for k in range(epoch):
 									synapse_memory[j][h]=1
 									break
 						if synapse_memory[j][h]!=1: # if presynaptic spike was not in the tolerance window, reduce weights of that synapse
-									synapse[j][h] = update(synapse[j][h], rl(3))
+									synapse[j][h] = update(synapse[j][h], rl(1))
 					for p in range(n):
 						if p!=winner:
 							if(output_layer[p].P>output_layer[p].Pth):
 								count_spikes[p]+=1
-							output_layer[p].inhibit()
+							output_layer[p].inhibit(t)
 					break
 
 		# bring neuron potentials to rest
