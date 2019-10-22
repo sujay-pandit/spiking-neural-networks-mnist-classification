@@ -7,7 +7,6 @@
 
 
 import numpy as np
-import imageio
 from parameters import *
 
 def rf(inp):

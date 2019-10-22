@@ -5,19 +5,23 @@
 #################################################################################################################
 import numpy as np
 import random
-scale = 1
-T = 200 #(us) Training time for every image
-t_back = -5 #(us)
-t_fore = 5 #(us)
 
+# Simulation Parameters
+T = 200 #Training time for every image
+t_back = -5
+epoch = 1
+
+# Input Parameters
 pixel_x = 28
-Prest = -70 #(mV)
-m = pixel_x*pixel_x #Number of neurons in first layer
-n =  10  #Number of neurons in second layer
-Pinhibit = -300 #(mV) 
-Pth = -55 #(mV)
+Prest = -70
+m = pixel_x*pixel_x # Number of neurons in first layer
+n =  10  # Number of neurons in second layer
+
+# Neuron Parameters
+Pinhibit = -300 
+Pth = -55
 Phyperpolarization = -90
-var_D = 0.1
+var_D = 1
 synaptic_change_threshold = np.sqrt(m)
 synapse_init=np.zeros((n,m))
 for i in range(n):
@@ -25,16 +29,13 @@ for i in range(n):
 		synapse_init[i][j] = random.uniform(0.8,0.9)
 w_min=0
 w_max=np.max(synapse_init)
-# w_max = 1
-# w_min = 0
-sigma = 0.01 #0.02
-A_plus = 0.8  # time difference is positive i.e negative reinforcement
-A_minus = 0.8 # 0.01 # time difference is negative i.e positive reinforcement 
-tau_plus = 100
-tau_minus = 100
 
-epoch = 1
-
+# STDP Parameters
+sigma = 0.01 
+A_plus = 0.8  
+A_minus = 0.8 
+tau_plus = 5
+tau_minus = 5
 mu=0.9
-fr_bits = 12
-int_bits = 12
+
+
