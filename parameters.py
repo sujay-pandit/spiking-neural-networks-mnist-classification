@@ -9,13 +9,15 @@ import random
 # Simulation Parameters
 T = 350 #Training time for every image
 t_back = -5
-epoch = 10
+epoch = 1
+
 
 # Input Parameters
+training_set_path= "./mnist_png/training/"
 pixel_x = 28
 Prest = -70
 m = pixel_x*pixel_x # Number of neurons in first layer
-n =  10  # Number of neurons in second layer
+n =  20  # Number of neurons in second layer
 
 # Neuron Parameters
 Pinhibit = -100 
@@ -23,7 +25,6 @@ Pth = -55
 Phyperpolarization = -90
 Pdrop = 0.8
 Pthdrop = 0.4
-synaptic_change_threshold = np.sqrt(m)
 synapse_init=np.zeros((n,m))
 for i in range(n):
 	for j in range(m):

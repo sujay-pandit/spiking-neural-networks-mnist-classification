@@ -13,9 +13,9 @@ class neuron:
 		self.t_ref+=t
 	def inhibit(self,t):
 		self.P  = Pinhibit
-		self.t_ref=2*self.t_ref+t
+		self.t_ref+=t
 	def initial(self):
 		self.Pth = Pth
 		self.t_rest = -1
-		self.t_ref=10 #(us)
+		self.t_ref=5 #(us)
 		self.P = Prest
