@@ -37,9 +37,11 @@ for i in range(n):
 
 predicted_class=[]
 actual_class=[]
+prediction_count=np.zeros((n,n))
 for folder_number in range(10):
 	image_path='./mnist_png/testing/'+str(folder_number)+'/'
-	for i in os.listdir(image_path)[:5]:
+	for i in os.listdir(image_path)[:2]:
+		
 		count_spikes = np.zeros((n,1))
 
 		#read the image to be classified
@@ -74,20 +76,6 @@ for folder_number in range(10):
 									if(output_layer[p].P>output_layer[p].Pth):
 										output_layer[p].inhibit(t)
 							break
-
-				#Check for spikes				
-				# for j,x in enumerate(output_layer):
-				# 	if(j==winner and active_pot[j]>output_layer[j].Pth):
-				# 		x.t_rest = t + x.t_ref
-				# 		x.hyperpolarization()
-				# 		x.Pth-= -1 ## Homoeostasis: Increasing the threshold of the neuron
-				# 		count_spikes[j]+=1
-				# 		for p in range(n):
-				# 			if p!=winner:
-				# 				if(output_layer[p].P>output_layer[p].Pth):
-				# 					count_spikes[p]+=1
-				# 				output_layer[p].inhibit()
-				# 		break
 		
 		print(count_spikes)
 		print(i)
@@ -95,5 +83,8 @@ for folder_number in range(10):
 		print("Actua class = ",folder_number)
 		predicted_class.append(labels_matrix[np.argmax(count_spikes)][0])
 		actual_class.append(folder_number)
+		prediction_count[int(folder_number)][int(labels_matrix[np.argmax(count_spikes)][0])]+=1
+		print("Prediction for "+str(folder_number)+" : ",prediction_count[folder_number])
 accuracy=(np.sum(np.array(predicted_class)==np.array(actual_class))/len(predicted_class))*100
+np.savetxt("prediction_matrix.csv",prediction_count,delimiter=',')
 print(accuracy)
