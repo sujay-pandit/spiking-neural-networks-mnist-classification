@@ -28,8 +28,8 @@ Pthdrop = 0.4
 synapse_init=np.zeros((n,m))
 for i in range(n):
 	for j in range(m):
-		synapse_init[i][j] = random.uniform(0.7,0.9)
-w_min=0
+		synapse_init[i][j] = random.uniform(0.95,1)
+w_min=0.00001
 w_max=np.max(synapse_init)
 
 # STDP Parameters

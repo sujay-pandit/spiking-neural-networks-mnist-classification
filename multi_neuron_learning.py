@@ -45,7 +45,7 @@ label_neuron=np.repeat(-1,n)
 for k in range(epoch):
 	print(k)
 	for folder in os.listdir('./mnist_png/training/'):
-		for i in os.listdir("./mnist_png/training/"+folder+"/")[:10]:
+		for i in os.listdir("./mnist_png/training/"+folder+"/")[:2]:
 			print(i)
 			img = imageio.imread("./mnist_png/training/"+folder+"/"+i)
 
