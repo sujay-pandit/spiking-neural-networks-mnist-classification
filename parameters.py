@@ -17,7 +17,7 @@ training_set_path= "./mnist_png/training/"
 pixel_x = 28
 Prest = -70
 m = pixel_x*pixel_x # Number of neurons in first layer
-n =  100  # Number of neurons in second layer
+n =  200  # Number of neurons in second layer
 
 # Neuron Parameters
 Pinhibit = -100 
@@ -28,11 +28,12 @@ Pthdrop = 0.4
 synapse_init=np.zeros((n,m))
 for i in range(n):
 	for j in range(m):
-		synapse_init[i][j] = random.uniform(0.95,1)
+		synapse_init[i][j] = 1#random.uniform(0.95,1)
 w_min=0.00001
 w_max=np.max(synapse_init)
 
 # STDP Parameters
+STDP_offset = 0
 sigma = 0.01 
 A_plus = 0.8  
 A_minus = 0.8 

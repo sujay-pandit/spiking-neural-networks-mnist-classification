@@ -45,8 +45,9 @@ label_neuron=np.repeat(-1,n)
 for k in range(epoch):
 	print(k)
 	for folder in os.listdir('./mnist_png/training/'):
-		for i in os.listdir("./mnist_png/training/"+folder+"/")[:10]:
-			print(i)
+		for i in os.listdir("./mnist_png/training/"+folder+"/")[:20]:
+			t0=time.time()
+			print(i , " : ")
 			img = imageio.imread("./mnist_png/training/"+folder+"/"+i)
 
 			#Convolving image with receptive field and encoding to generate spike train
@@ -103,7 +104,7 @@ for k in range(epoch):
 
 			#print("Image: "+i+" Spike COunt = ",count_spikes)
 			print("Learning Neuron: ",np.argmax(count_spikes))
-	
+			print("Learning duration: ", time.time()-t0)
 			# to write intermediate synapses for neurons
 			#for p in range(n):
 			#		reconst_weights(synapse[p],str(p)+"_epoch_"+str(k))

@@ -14,9 +14,9 @@ from parameters import *
 def rl(t):
 	
 	if t>0:
-		return -A_plus*np.exp(-float(t)/tau_plus)
+		return -A_plus*[np.exp(-float(t)/tau_plus)-STDP_offset]
 	if t<=0:
-		return A_minus*np.exp(float(t)/tau_minus)
+		return A_minus*[np.exp(float(t)/tau_minus)-STDP_offset]
 
 
 #STDP weight update rule

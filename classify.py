@@ -12,7 +12,7 @@ from spike_train import *
 import pandas as pd
 import os
 from parameters import *
-
+import time
 
 #time series 
 time_of_learning  = np.arange(1, T+1, 1)
@@ -40,7 +40,8 @@ actual_class=[]
 prediction_count=np.zeros((n,n))
 for folder_number in range(10):
 	image_path='./mnist_png/testing/'+str(folder_number)+'/'
-	for i in os.listdir(image_path)[:5]:
+	for i in os.listdir(image_path):
+		t0 = time.time()
 		
 		count_spikes = np.zeros((n,1))
 
@@ -80,11 +81,12 @@ for folder_number in range(10):
 		#print(count_spikes)
 		print(i)
 		print("Predicted_class = ",labels_matrix[np.argmax(count_spikes)][0])
-		print("Actua class = ",folder_number)
+		print("Actual class = ",folder_number)
+		print("Time for inference = ",time.time()-t0)
 		predicted_class.append(labels_matrix[np.argmax(count_spikes)][0])
 		actual_class.append(folder_number)
 		prediction_count[int(folder_number)][int(labels_matrix[np.argmax(count_spikes)][0])]+=1
-		print("Prediction for "+str(folder_number)+" : ",prediction_count[folder_number])
+		#print("Prediction for "+str(folder_number)+" : ",prediction_count[folder_number])
 accuracy=(np.sum(np.array(predicted_class)==np.array(actual_class))/len(predicted_class))*100
 np.savetxt("prediction_matrix.csv",prediction_count,delimiter=',')
 print(accuracy)
