@@ -17,7 +17,7 @@ training_set_path= "./mnist_png/training/"
 pixel_x = 28
 Prest = -70
 m = pixel_x*pixel_x # Number of neurons in first layer
-n =  20  # Number of neurons in second layer
+n =  100  # Number of neurons in second layer
 
 # Neuron Parameters
 Pinhibit = -100 

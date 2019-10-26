@@ -40,7 +40,7 @@ actual_class=[]
 prediction_count=np.zeros((n,n))
 for folder_number in range(10):
 	image_path='./mnist_png/testing/'+str(folder_number)+'/'
-	for i in os.listdir(image_path)[:2]:
+	for i in os.listdir(image_path)[:5]:
 		
 		count_spikes = np.zeros((n,1))
 
@@ -77,7 +77,7 @@ for folder_number in range(10):
 										output_layer[p].inhibit(t)
 							break
 		
-		print(count_spikes)
+		#print(count_spikes)
 		print(i)
 		print("Predicted_class = ",labels_matrix[np.argmax(count_spikes)][0])
 		print("Actua class = ",folder_number)
