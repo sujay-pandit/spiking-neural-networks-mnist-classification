@@ -4,7 +4,7 @@
   1.STDP-based Unsupervised Feature Learning using Convolution-over-time in Spiking Neural Networks for 
     Energy-Efficient Neuromorphic Computing 
     by
-    GOPALAKRISHNAN SRINIVASAN, PRIYADARSHINI PANDA, and KAUSHIK ROY
+    Gopalakrishnan Srinivasan, Priyadarshini Panda and Kaushik Roy
 
   2.Unsupervised learning of digit recognition using spike-timing-dependent plasticity 
     by
