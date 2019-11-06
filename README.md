@@ -16,6 +16,6 @@
   
     Number of input neurons : 784 (image 28x28 -> 784 x 1 vector)
     Number of hidden neurons : 0
-    Number of output neurons : 200 neurons trained on 20 samples of each digit
-    Classification accuracy on MNIST Test set = 65.91%
+    Number of output neurons : 800 neurons trained on 20 samples of each digit
+    Classification accuracy on MNIST Test set = 71.49%
 
