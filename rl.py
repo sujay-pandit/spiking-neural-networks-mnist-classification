@@ -13,10 +13,11 @@ from parameters import *
 #STDP reinforcement learning curve
 def rl(t):
 	
+	
 	if t>0:
-		return -A_plus*[np.exp(-float(t)/tau_plus)-STDP_offset]
+		return -A_plus*(np.exp(-float(t)/tau_plus)-STDP_offset)
 	if t<=0:
-		return A_minus*[np.exp(float(t)/tau_minus)-STDP_offset]
+		return A_minus*(np.exp(float(t)/tau_minus)-STDP_offset)
 
 
 #STDP weight update rule
@@ -27,4 +28,5 @@ def update(w, del_w):
 		return w + sigma*del_w*(w_max-w)**mu
 
 
-	
+# if __name__ == "__main__":
+# 	print(rl(1))
