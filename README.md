@@ -1,4 +1,4 @@
-# This repository is created to implement Unsupervised classification of MNIST dataset using SNN
+# This repository is created to implement classification of MNIST dataset using SNN
   Following papers have been used as a reference:-
 
   1.STDP-based Unsupervised Feature Learning using Convolution-over-time in Spiking Neural Networks for 
